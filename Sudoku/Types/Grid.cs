@@ -6,7 +6,7 @@ namespace Sudoku.Types {
     ///   A generic two-dimensional square array
     /// </summary>
     /// <typeparam name = "T"></typeparam>
-    public class Grid<T> : ICountable<T> where T : class {
+    public class Grid<T> : IEnumerable<T> where T : class {
         readonly T[,] _tGrid;
 
         public Grid(T[,] tGrid) {

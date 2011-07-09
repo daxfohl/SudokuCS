@@ -10,7 +10,7 @@ namespace Sudoku.Model {
         readonly int _sqrRow;
         readonly int _startCol;
         readonly int _startRow;
-        Grid<Cell> _cells;
+        Cell[] _cells;
         Line[] _intersectingLines;
 
         public Square(SudokuModel model, int sqrCol, int sqrRow)
@@ -47,16 +47,15 @@ namespace Sudoku.Model {
             get { return _startRow; }
         }
 
-        public override ICountable<Cell> Cells {
+        public override Cell[] Cells {
             get {
                 if (_cells == null) {
-                    var cells = new Cell[SideLength,SideLength];
+                    _cells = new Cell[SideLength * SideLength];
                     for (int c = 0; c < SideLength; ++c) {
                         for (int r = 0; r < SideLength; ++r) {
-                            cells[c, r] = Model.Cells[c + _startCol, r + _startRow];
+                            _cells[c * SideLength +  r] = Model.Cells[c + _startCol, r + _startRow];
                         }
                     }
-                    _cells = new Grid<Cell>(cells);
                 }
                 return _cells;
             }
@@ -92,9 +91,9 @@ namespace Sudoku.Model {
         /// for compatability with functions that return that datatype.  (This compatability
         /// was required for collections in which Rows and Columns could also be included).
         /// </summary>
-        public class Grid : Grid<Square>, ICountable<IRegion> {
+        public class Grid : Grid<Square>, IEnumerable<IRegion> {
             public Grid(Square[,] tGrid)
-                : base(tGrid) {}
+                : base(tGrid) { }
 
             public Square this[Cell cell] {
                 get {
@@ -102,10 +101,6 @@ namespace Sudoku.Model {
                     int squareRow = cell.RowIndex / SideLength;
                     return this[squareCol, squareRow];
                 }
-            }
-
-            IRegion ICountable<IRegion>.this[int i] {
-                get { return this[i]; }
             }
 
             IEnumerator<IRegion> IEnumerable<IRegion>.GetEnumerator() {

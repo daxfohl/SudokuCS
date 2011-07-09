@@ -7,7 +7,7 @@ namespace Sudoku.Model {
     /// The abstract interface for Row, Column, and Square
     /// </summary>
     public interface IRegion {
-        ICountable<Cell> Cells { get; }
+        Cell[] Cells { get; }
         int LastChangedIteration { get; set; }
         IEnumerable<int> UnsolvedValues { get; }
         bool Contains(Cell cell);
@@ -24,7 +24,7 @@ namespace Sudoku.Model {
             LastChangedIteration = -1;
         }
 
-        public abstract ICountable<Cell> Cells { get; }
+        public abstract Cell[] Cells { get; }
         public int LastChangedIteration { get; set; }
 
         public IEnumerable<int> UnsolvedValues {

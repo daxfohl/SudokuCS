@@ -32,7 +32,7 @@ namespace Sudoku.Solving {
 
         static void IsolateSet(BitArray32 set, IRegion region) {
             var cellsNotContainedBySet = region.Cells.Where(cell => !set.Contains(cell.PossibilitySet)).ToList();
-            var numCellsContainedBySet = region.Cells.Count - cellsNotContainedBySet.Count;
+            var numCellsContainedBySet = region.Cells.Length - cellsNotContainedBySet.Count;
             if (numCellsContainedBySet != set.HiBitCount) {
                 return;
             }

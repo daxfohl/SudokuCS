@@ -13,9 +13,9 @@ namespace Sudoku.Model {
 
         readonly List<IRegion> _allRegions;
         readonly Grid<Cell> _cells;
-        readonly Line.LineList<Column> _cols;
+        readonly Column[] _cols;
         readonly BitArray32 _possibilitySet;
-        readonly Line.LineList<Row> _rows;
+        readonly Row[] _rows;
         readonly int _size;
         readonly int _sizeCubed;
         readonly int _sizeSqrt;
@@ -49,14 +49,12 @@ namespace Sudoku.Model {
             _cells = new Grid<Cell>(cells);
 
             // Initialize the Row and Column objects
-            var rows = new Row[size];
-            var cols = new Column[size];
+            _rows = new Row[size];
+            _cols = new Column[size];
             for (int i = 0; i < size; ++i) {
-                rows[i] = new Row(this, i);
-                cols[i] = new Column(this, i);
+                _rows[i] = new Row(this, i);
+                _cols[i] = new Column(this, i);
             }
-            _rows = new Line.LineList<Row>(rows);
-            _cols = new Line.LineList<Column>(cols);
 
             // Initialize the Square objects
             var squares = new Square[_sizeSqrt,_sizeSqrt];
@@ -98,14 +96,12 @@ namespace Sudoku.Model {
             _cells = new Grid<Cell>(cells);
 
             // Initialize the Row and Column objects
-            var rows = new Row[size];
-            var cols = new Column[size];
+            _rows = new Row[size];
+            _cols = new Column[size];
             for (int i = 0; i < size; ++i) {
-                rows[i] = new Row(this, model.Rows[i]);
-                cols[i] = new Column(this, model.Columns[i]);
+                _rows[i] = new Row(this, model.Rows[i]);
+                _cols[i] = new Column(this, model.Columns[i]);
             }
-            _rows = new Line.LineList<Row>(rows);
-            _cols = new Line.LineList<Column>(cols);
 
             // Initialize the Square objects
             var squares = new Square[_sizeSqrt,_sizeSqrt];
@@ -163,11 +159,11 @@ namespace Sudoku.Model {
             get { return _sizeCubed; }
         }
 
-        public Line.LineList<Row> Rows {
+        public Row[] Rows {
             get { return _rows; }
         }
 
-        public Line.LineList<Column> Columns {
+        public Column[] Columns {
             get { return _cols; }
         }
 
