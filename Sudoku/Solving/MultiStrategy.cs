@@ -20,7 +20,7 @@ namespace Sudoku.Solving {
             strategies.CopyTo(_strategies, 0);
         }
 
-        public event EventHandler<EventArgs<Strategy>> ContainedStrategyFinished;
+        public event Action<Strategy> ContainedStrategyFinished;
 
         protected override void OperateOn(SudokuModel model) {
             if (_strategies.Length == 0) {
@@ -31,7 +31,7 @@ namespace Sudoku.Solving {
                 var strategy = _strategies[i];
                 strategy.Run(model);
                 if (ContainedStrategyFinished != null) {
-                    ContainedStrategyFinished(this, strategy);
+                    ContainedStrategyFinished(strategy);
                 }
                 // If we've eliminated something, jump back to the first strategy; otherwise
                 // go to the next strategy.

@@ -123,7 +123,7 @@ namespace Sudoku.Model {
 
         #region Events
 
-        public event EventHandler<EventArgs<Cell>> Changed;
+        public event Action<Cell> Changed;
 
         #endregion
 
@@ -231,7 +231,7 @@ namespace Sudoku.Model {
                 DuplicateElimination.EliminateDuplicates(LastChangedCell, e.Foundin);
             }
             if (Changed != null) {
-                Changed(this, e.Cell);
+                Changed(e.Cell);
             }
         }
 

@@ -54,9 +54,9 @@ namespace Sudoku.View {
 
         #region Model and Solver event handlers
 
-        void HandleModelChanged(object sender, EventArgs<Cell> e) {
+        void HandleModelChanged(Cell cell) {
             if (_chkUpdate.Checked) {
-                UpdateCell(e.Value);
+                UpdateCell(cell);
                 UpdateLabels();
             }
         }
@@ -71,13 +71,12 @@ namespace Sudoku.View {
             _lblRemain.Text = string.Format("Eliminated : {0}/{1} ({2:P2})", _model.EliminatedCount, total, (double)_model.EliminatedCount / total);
         }
 
-        void HandleSolverFinished(object sender, EventArgs e) {
+        void HandleSolverFinished() {
             AppendProgressLine("Finished in " + _solver.RunTime.TotalMilliseconds + " ms.");
         }
 
-        void HandleSolverScanFinished(object sender, EventArgs<Strategy> e) {
+        void HandleSolverScanFinished(Strategy strategy) {
             if (_chkUpdate.Checked) {
-                var strategy = e.Value;
                 AppendProgressLine(string.Format("{0}:\t {1}, {2}\t({3}, {4})",
                                                  strategy.GetType().Name,
                                                  strategy.EliminatedLastRun,

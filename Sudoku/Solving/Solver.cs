@@ -34,22 +34,22 @@ namespace Sudoku.Solving {
             }
         }
 
-        public event EventHandler<EventArgs<Strategy>> ScanFinished;
-        public event EventHandler<EventArgs> Finished;
+        public event Action<Strategy> ScanFinished;
+        public event Action Finished;
 
         public void Solve() {
             StartTime = DateTime.Now;
             _eliminationStrategy.Run(_model);
             FinishTime = DateTime.Now;
             if (Finished != null) {
-                Finished(this, EventArgs.Empty);
+                Finished();
             }
         }
 
-        void HandleScanFinished(object sender, EventArgs<Strategy> e) {
+        void HandleScanFinished( Strategy e) {
             // bubble up the event
             if (ScanFinished != null) {
-                ScanFinished(this, e);
+                ScanFinished(e);
             }
         }
     }

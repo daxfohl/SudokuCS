@@ -69,7 +69,6 @@
     <Compile Include="Model\Row.cs" />
     <Compile Include="Model\Square.cs" />
     <Compile Include="Solving\DuplicateElimination.cs" />
-    <Compile Include="Types\EventArgs.cs" />
     <Compile Include="View\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
