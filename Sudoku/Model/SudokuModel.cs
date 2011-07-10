@@ -20,7 +20,7 @@ namespace Sudoku.Model {
         readonly int _sizeCubed;
         readonly int _sizeSqrt;
         readonly int _sizeSquared;
-        readonly Square.Grid _squares;
+        readonly Grid<Square> _squares;
 
         #endregion
 
@@ -63,7 +63,7 @@ namespace Sudoku.Model {
                     squares[sqrCol, sqrRow] = new Square(this, sqrCol, sqrRow);
                 }
             }
-            _squares = new Square.Grid(squares);
+            _squares = new Grid<Square>(squares);
 
             // Finally initialize the Regions object
             _allRegions = new List<IRegion>(_cols);
@@ -110,7 +110,7 @@ namespace Sudoku.Model {
                     squares[sqrCol, sqrRow] = new Square(this, model.Squares[sqrCol, sqrRow]);
                 }
             }
-            _squares = new Square.Grid(squares);
+            _squares = new Grid<Square>(squares);
 
             // Finally initialize the Regions object
             _allRegions = new List<IRegion>(_cols);
@@ -167,7 +167,13 @@ namespace Sudoku.Model {
             get { return _cols; }
         }
 
-        public Square.Grid Squares {
+        public Square GetSquare(Cell cell) {
+            int squareCol = cell.ColumnIndex / _sizeSqrt;
+            int squareRow = cell.RowIndex / _sizeSqrt;
+            return _squares[squareCol, squareRow];
+        }
+
+        public Grid<Square> Squares {
             get { return _squares; }
         }
 

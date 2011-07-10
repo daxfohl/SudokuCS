@@ -76,7 +76,7 @@ namespace Sudoku.Model {
         }
 
         public Square Square {
-            get { return _model.Squares[this]; }
+            get { return _model.GetSquare(this); }
         }
 
         public int RemainingPossibilityCount { get; private set; }

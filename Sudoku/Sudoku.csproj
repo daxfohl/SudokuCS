@@ -64,8 +64,6 @@
     <Compile Include="Model\Cell.cs" />
     <Compile Include="Types\Grid.cs" />
     <Compile Include="Model\Line.cs" />
-    <Compile Include="Types\ICountable.cs" />
-    <Compile Include="Types\LightweightList.cs" />
     <Compile Include="Model\Column.cs" />
     <Compile Include="Model\Region.cs" />
     <Compile Include="Model\Row.cs" />

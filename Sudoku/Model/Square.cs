@@ -53,7 +53,7 @@ namespace Sudoku.Model {
                     _cells = new Cell[SideLength * SideLength];
                     for (int c = 0; c < SideLength; ++c) {
                         for (int r = 0; r < SideLength; ++r) {
-                            _cells[c * SideLength +  r] = Model.Cells[c + _startCol, r + _startRow];
+                            _cells[c * SideLength + r] = Model.Cells[c + _startCol, r + _startRow];
                         }
                     }
                 }
@@ -84,32 +84,5 @@ namespace Sudoku.Model {
 
         #endregion
 
-        #region Grid
-
-        /// <summary>
-        /// A Grid of Squares, which also extends ICountable(IRegion)
-        /// for compatability with functions that return that datatype.  (This compatability
-        /// was required for collections in which Rows and Columns could also be included).
-        /// </summary>
-        public class Grid : Grid<Square>, IEnumerable<IRegion> {
-            public Grid(Square[,] tGrid)
-                : base(tGrid) { }
-
-            public Square this[Cell cell] {
-                get {
-                    int squareCol = cell.ColumnIndex / SideLength;
-                    int squareRow = cell.RowIndex / SideLength;
-                    return this[squareCol, squareRow];
-                }
-            }
-
-            IEnumerator<IRegion> IEnumerable<IRegion>.GetEnumerator() {
-                foreach (var x in this) {
-                    yield return x;
-                }
-            }
-        }
-
-        #endregion
     }
 }
