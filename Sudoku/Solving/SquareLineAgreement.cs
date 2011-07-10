@@ -26,7 +26,7 @@ namespace Sudoku.Solving {
             for (var num = 0; num < model.Size; ++num) {
                 // determine if the number is in the set of cells {r1 minus r2}
                 var num1 = num;
-                var found = r1.Cells.Any(cell => !r2.Contains(cell) && (cell._possibilitySet & (1 << num1)) != 0);
+                var found = r1.Cells.Any(cell => !r2.Contains(cell) && (cell.PossibilitySet & (1 << num1)) != 0);
                 // if not found, then we know it must be in {r1 intersection r2}, so we can
                 // eliminate it in {r2 minus r1}
                 if (found) {

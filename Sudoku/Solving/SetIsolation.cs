@@ -31,7 +31,7 @@ namespace Sudoku.Solving {
         }
 
         static void IsolateSet(int set, IRegion region) {
-            var cellsNotContainedBySet = region.Cells.Where(cell => !((cell.PossibilitySet | set) == set)).ToList();
+            var cellsNotContainedBySet = region.Cells.Where(cell => (cell.PossibilitySet | set) != set).ToList();
             var numCellsContainedBySet = region.Cells.Length - cellsNotContainedBySet.Count;
             if (numCellsContainedBySet != set.HiBitCount()) {
                 return;

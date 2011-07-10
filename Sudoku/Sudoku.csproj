@@ -60,7 +60,7 @@
   <ItemGroup>
     <Compile Include="Solving\LoneRemainingCell.cs" />
     <Compile Include="Solving\MultiStrategy.cs" />
-    <Compile Include="Types\BitArray32.cs" />
+    <Compile Include="Types\BitArrayEx.cs" />
     <Compile Include="Model\Cell.cs" />
     <Compile Include="Types\Grid.cs" />
     <Compile Include="Model\Line.cs" />

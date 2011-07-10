@@ -19,7 +19,7 @@ namespace Sudoku.Solving {
                         var timesFound = 0;
                         Cell foundAt = null;
                         foreach (var cell in region.Cells) {
-                            if ((cell._possibilitySet & (1 << i)) != 0) {
+                            if ((cell.PossibilitySet & (1 << i)) != 0) {
                                 ++timesFound;
                                 foundAt = cell;
                                 if (timesFound > 1) {

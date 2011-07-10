@@ -12,7 +12,7 @@ namespace Sudoku.Model {
         readonly int _row;
         int _lastChangedIteration = -1;
 
-        public int _possibilitySet;
+        int _possibilitySet;
         IRegion[] _regions;
         int _value = -1;
 
