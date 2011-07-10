@@ -1,4 +1,5 @@
 using Sudoku.Model;
+using Sudoku.Types;
 
 namespace Sudoku.Solving {
     /// <summary>
@@ -27,7 +28,7 @@ namespace Sudoku.Solving {
             // to keep operating in the same area than to start over at cell[0,0]
             // every time.
             do {
-                var cell = model.Cells[_indices[_index]];
+                var cell = model.Cells.Get(_indices[_index]);
                 if (OperateOn(cell, model)) {
                     return;
                 }

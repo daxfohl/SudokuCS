@@ -12,7 +12,7 @@ namespace Sudoku.Model {
         #region Members
 
         readonly List<IRegion> _allRegions;
-        readonly Grid<Cell> _cells;
+        readonly Cell[,] _cells;
         readonly Column[] _cols;
         readonly BitArray32 _possibilitySet;
         readonly Row[] _rows;
@@ -20,7 +20,7 @@ namespace Sudoku.Model {
         readonly int _sizeCubed;
         readonly int _sizeSqrt;
         readonly int _sizeSquared;
-        readonly Grid<Square> _squares;
+        readonly Square[,] _squares;
 
         #endregion
 
@@ -39,14 +39,13 @@ namespace Sudoku.Model {
             _possibilitySet = BitArray32.CreateWithBottomNBitsOn(_size);
 
             // Initialize the Cell objects, and the cache values
-            var cells = new Cell[size,size];
+            _cells = new Cell[size, size];
             for (int col = 0; col < size; ++col) {
                 for (int row = 0; row < size; ++row) {
-                    cells[col, row] = new Cell(this, col, row);
-                    cells[col, row].Changed += HandleCellChanged;
+                    _cells[col, row] = new Cell(this, col, row);
+                    _cells[col, row].Changed += HandleCellChanged;
                 }
             }
-            _cells = new Grid<Cell>(cells);
 
             // Initialize the Row and Column objects
             _rows = new Row[size];
@@ -57,18 +56,17 @@ namespace Sudoku.Model {
             }
 
             // Initialize the Square objects
-            var squares = new Square[_sizeSqrt,_sizeSqrt];
+            _squares = new Square[_sizeSqrt, _sizeSqrt];
             for (int sqrCol = 0; sqrCol < _sizeSqrt; ++sqrCol) {
                 for (int sqrRow = 0; sqrRow < _sizeSqrt; ++sqrRow) {
-                    squares[sqrCol, sqrRow] = new Square(this, sqrCol, sqrRow);
+                    _squares[sqrCol, sqrRow] = new Square(this, sqrCol, sqrRow);
                 }
             }
-            _squares = new Grid<Square>(squares);
 
             // Finally initialize the Regions object
             _allRegions = new List<IRegion>(_cols);
             _allRegions.AddRange(_rows);
-            _allRegions.AddRange(_squares);
+            _allRegions.AddRange(_squares.Cast<Square>());
         }
 
         /// <summary>
@@ -86,14 +84,13 @@ namespace Sudoku.Model {
             _possibilitySet = BitArray32.CreateWithBottomNBitsOn(_size);
 
             // Initialize the Cell objects, and the cache values
-            var cells = new Cell[size,size];
+            _cells = new Cell[size, size];
             for (int col = 0; col < size; ++col) {
                 for (int row = 0; row < size; ++row) {
-                    cells[col, row] = new Cell(this, model.Cells[col, row]);
-                    cells[col, row].Changed += HandleCellChanged;
+                    _cells[col, row] = new Cell(this, model.Cells[col, row]);
+                    _cells[col, row].Changed += HandleCellChanged;
                 }
             }
-            _cells = new Grid<Cell>(cells);
 
             // Initialize the Row and Column objects
             _rows = new Row[size];
@@ -104,18 +101,17 @@ namespace Sudoku.Model {
             }
 
             // Initialize the Square objects
-            var squares = new Square[_sizeSqrt,_sizeSqrt];
+            _squares = new Square[_sizeSqrt, _sizeSqrt];
             for (int sqrCol = 0; sqrCol < _sizeSqrt; ++sqrCol) {
                 for (int sqrRow = 0; sqrRow < _sizeSqrt; ++sqrRow) {
-                    squares[sqrCol, sqrRow] = new Square(this, model.Squares[sqrCol, sqrRow]);
+                    _squares[sqrCol, sqrRow] = new Square(this, model.Squares[sqrCol, sqrRow]);
                 }
             }
-            _squares = new Grid<Square>(squares);
 
             // Finally initialize the Regions object
             _allRegions = new List<IRegion>(_cols);
             _allRegions.AddRange(_rows);
-            _allRegions.AddRange(_squares);
+            _allRegions.AddRange(_squares.Cast<Square>());
 
             SolvedCount = model.SolvedCount;
             EliminatedCount = model.EliminatedCount;
@@ -173,7 +169,7 @@ namespace Sudoku.Model {
             return _squares[squareCol, squareRow];
         }
 
-        public Grid<Square> Squares {
+        public Square[,] Squares {
             get { return _squares; }
         }
 
@@ -181,7 +177,7 @@ namespace Sudoku.Model {
             get { return _allRegions; }
         }
 
-        public Grid<Cell> Cells {
+        public Cell[,] Cells {
             get { return _cells; }
         }
 
@@ -204,7 +200,7 @@ namespace Sudoku.Model {
         /// <returns>true if valid</returns>
         public bool IsConsistent {
             get {
-                return !_cells.Any(cell => cell.PossibilitySet == BitArray32.Zero) &&
+                return !_cells.Cast<Cell>().Any(cell => cell.PossibilitySet == BitArray32.Zero) &&
                        _allRegions.Select(region => region.Cells.Aggregate(BitArray32.Zero, (current, cell) => current | cell.PossibilitySet))
                            .All(foundbits => foundbits == _possibilitySet);
             }
