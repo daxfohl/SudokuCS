@@ -30,10 +30,10 @@ namespace Sudoku.Solving {
             }
         }
 
-        static void IsolateSet(BitArray32 set, IRegion region) {
-            var cellsNotContainedBySet = region.Cells.Where(cell => !set.Contains(cell.PossibilitySet)).ToList();
+        static void IsolateSet(int set, IRegion region) {
+            var cellsNotContainedBySet = region.Cells.Where(cell => !((cell.PossibilitySet | set) == set)).ToList();
             var numCellsContainedBySet = region.Cells.Length - cellsNotContainedBySet.Count;
-            if (numCellsContainedBySet != set.HiBitCount) {
+            if (numCellsContainedBySet != set.HiBitCount()) {
                 return;
             }
             // we now know that each of the numbers in the set must be exclusively in

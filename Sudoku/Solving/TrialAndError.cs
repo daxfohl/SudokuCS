@@ -44,7 +44,7 @@ namespace Sudoku.Solving {
             if (!cell.IsSolved) {
                 // obviously can't eliminate anything in a solved cell.
                 // try each int i that is a possibility for the cell, and see if an error results
-                foreach (var i in cell.PossibilitySet.HighBitPositions) {
+                foreach (var i in cell.PossibilitySet.HighBitPositions()) {
                     var clone = new SudokuModel(model);
                     clone.Cells[cell.ColumnIndex, cell.RowIndex].Value = i;
                     _elimStrategy.Run(clone);

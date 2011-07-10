@@ -14,7 +14,7 @@ namespace Sudoku.Model {
         readonly List<IRegion> _allRegions;
         readonly Cell[,] _cells;
         readonly Column[] _cols;
-        readonly BitArray32 _possibilitySet;
+        readonly int _possibilitySet;
         readonly Row[] _rows;
         readonly int _size;
         readonly int _sizeCubed;
@@ -36,7 +36,7 @@ namespace Sudoku.Model {
             _sizeSqrt = Convert.ToInt32(Math.Sqrt(size));
             _sizeSquared = size * size;
             _sizeCubed = _sizeSquared * size;
-            _possibilitySet = BitArray32.CreateWithBottomNBitsOn(_size);
+            _possibilitySet = (1 << _size) - 1;
 
             // Initialize the Cell objects, and the cache values
             _cells = new Cell[size, size];
@@ -81,7 +81,7 @@ namespace Sudoku.Model {
             _sizeSqrt = Convert.ToInt32(Math.Sqrt(size));
             _sizeSquared = size * size;
             _sizeCubed = _sizeSquared * size;
-            _possibilitySet = BitArray32.CreateWithBottomNBitsOn(_size);
+            _possibilitySet = (1 << _size) - 1;
 
             // Initialize the Cell objects, and the cache values
             _cells = new Cell[size, size];
@@ -185,7 +185,7 @@ namespace Sudoku.Model {
 
         public int EliminatedCount { get; private set; }
 
-        public BitArray32 PossibilitySet {
+        public int PossibilitySet {
             get { return _possibilitySet; }
         }
 
@@ -200,8 +200,8 @@ namespace Sudoku.Model {
         /// <returns>true if valid</returns>
         public bool IsConsistent {
             get {
-                return !_cells.Cast<Cell>().Any(cell => cell.PossibilitySet == BitArray32.Zero) &&
-                       _allRegions.Select(region => region.Cells.Aggregate(BitArray32.Zero, (current, cell) => current | cell.PossibilitySet))
+                return !_cells.Cast<Cell>().Any(cell => cell.PossibilitySet == 0) &&
+                       _allRegions.Select(region => region.Cells.Aggregate(0, (current, cell) => current | cell.PossibilitySet))
                            .All(foundbits => foundbits == _possibilitySet);
             }
         }

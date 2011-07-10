@@ -12,7 +12,7 @@ namespace Sudoku.Model {
         readonly int _row;
         int _lastChangedIteration = -1;
 
-        public BitArray32 _possibilitySet;
+        public int _possibilitySet;
         IRegion[] _regions;
         int _value = -1;
 
@@ -46,7 +46,7 @@ namespace Sudoku.Model {
                     return;
                 }
                 var oldVal = _possibilitySet;
-                _possibilitySet = BitArray32.CreateWithNthBitOn(value);
+                _possibilitySet = 1 << value;
                 RemainingPossibilityCount = 1;
                 _value = value;
                 if (Changed != null) {
@@ -85,7 +85,7 @@ namespace Sudoku.Model {
         ///   A bitflag that shows which numbers are / aren't eliminated; ie, 001001001 would
         ///   mean numbers 0, 3, and 6 are still possible, but the rest are eliminated.
         /// </summary>
-        public BitArray32 PossibilitySet {
+        public int PossibilitySet {
             get { return _possibilitySet; }
             set {
                 if (_possibilitySet == value) {
@@ -93,9 +93,9 @@ namespace Sudoku.Model {
                 }
                 var oldVal = _possibilitySet;
                 _possibilitySet = value;
-                RemainingPossibilityCount = value.HiBitCount;
+                RemainingPossibilityCount = value.HiBitCount();
                 if (RemainingPossibilityCount == 1) {
-                    _value = value.FirstHiBitPosition;
+                    _value = value.FirstHiBitPosition();
                 }
                 if (Changed != null) {
                     Changed(this, new CellChangedEventArgs(this, oldVal, _possibilitySet, null));
@@ -128,7 +128,7 @@ namespace Sudoku.Model {
                 return;
             }
             var oldVal = _possibilitySet;
-            _possibilitySet = BitArray32.CreateWithNthBitOn(val);
+            _possibilitySet = 1 << val;
             RemainingPossibilityCount = 1;
             _value = val;
             if (Changed != null) {
@@ -137,13 +137,14 @@ namespace Sudoku.Model {
         }
 
         public void Eliminate(int i) {
-            if (!_possibilitySet[i]) {
+            var mask = 1 << i;
+            if ((_possibilitySet & mask) == 0) {
                 return;
             }
             var oldVal = _possibilitySet;
-            _possibilitySet = _possibilitySet.ReplaceBit(i, false);
+            _possibilitySet = _possibilitySet & ~mask;
             if (--RemainingPossibilityCount == 1) {
-                _value = _possibilitySet.FirstHiBitPosition;
+                _value = _possibilitySet.FirstHiBitPosition();
             }
             if (Changed != null) {
                 Changed(this, new CellChangedEventArgs(this, oldVal, _possibilitySet, null));
@@ -157,18 +158,18 @@ namespace Sudoku.Model {
 
     public class CellChangedEventArgs : EventArgs {
         public Cell Cell;
-        public BitArray32 EliminatedSet;
+        public int EliminatedSet;
         public IRegion Foundin;
-        public BitArray32 NewSet;
+        public int NewSet;
         public int NumEliminated;
-        public BitArray32 OldSet;
+        public int OldSet;
 
-        public CellChangedEventArgs(Cell cell, BitArray32 oldSet, BitArray32 newSet, IRegion foundin) {
+        public CellChangedEventArgs(Cell cell, int oldSet, int newSet, IRegion foundin) {
             Cell = cell;
             OldSet = oldSet;
             NewSet = newSet;
-            EliminatedSet = oldSet.Minus(newSet);
-            NumEliminated = EliminatedSet.HiBitCount;
+            EliminatedSet = oldSet & ~newSet;
+            NumEliminated = EliminatedSet.HiBitCount();
             Foundin = foundin;
         }
     }
