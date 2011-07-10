@@ -213,11 +213,9 @@ namespace Sudoku.Model {
         /// <summary>
         ///   We update our cache variables and bubble up the event.
         /// </summary>
-        /// <param name = "sender"></param>
-        /// <param name = "e"></param>
-        void HandleCellChanged(object sender, CellChangedEventArgs e) {
-            EliminatedCount += e.NumEliminated;
-            LastChangedCell = e.Cell;
+        void HandleCellChanged(Cell cell, IRegion foundIn) {
+            EliminatedCount += 1;
+            LastChangedCell = cell;
             int value = LastChangedCell.Value;
             foreach (var region in LastChangedCell.IntersectingRegions) {
                 region.LastChangedIteration = ChangeCount;
@@ -228,10 +226,10 @@ namespace Sudoku.Model {
             ++ChangeCount;
             if (value != -1) {
                 ++SolvedCount;
-                DuplicateElimination.EliminateDuplicates(LastChangedCell, e.Foundin);
+                DuplicateElimination.EliminateDuplicates(LastChangedCell, foundIn);
             }
             if (Changed != null) {
-                Changed(e.Cell);
+                Changed(cell);
             }
         }
 

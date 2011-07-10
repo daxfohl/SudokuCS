@@ -45,12 +45,11 @@ namespace Sudoku.Model {
                 if (_value == value) {
                     return;
                 }
-                var oldVal = _possibilitySet;
                 _possibilitySet = 1 << value;
                 RemainingPossibilityCount = 1;
                 _value = value;
                 if (Changed != null) {
-                    Changed(this, new CellChangedEventArgs(this, oldVal, _possibilitySet, null));
+                    Changed(this, null);
                 }
             }
         }
@@ -91,14 +90,13 @@ namespace Sudoku.Model {
                 if (_possibilitySet == value) {
                     return;
                 }
-                var oldVal = _possibilitySet;
                 _possibilitySet = value;
                 RemainingPossibilityCount = value.HiBitCount();
                 if (RemainingPossibilityCount == 1) {
                     _value = value.FirstHiBitPosition();
                 }
                 if (Changed != null) {
-                    Changed(this, new CellChangedEventArgs(this, oldVal, _possibilitySet, null));
+                    Changed(this, null);
                 }
             }
         }
@@ -127,12 +125,11 @@ namespace Sudoku.Model {
             if (_value == val) {
                 return;
             }
-            var oldVal = _possibilitySet;
             _possibilitySet = 1 << val;
             RemainingPossibilityCount = 1;
             _value = val;
             if (Changed != null) {
-                Changed(this, new CellChangedEventArgs(this, oldVal, _possibilitySet, foundin));
+                Changed(this, foundin);
             }
         }
 
@@ -141,36 +138,17 @@ namespace Sudoku.Model {
             if ((_possibilitySet & mask) == 0) {
                 return;
             }
-            var oldVal = _possibilitySet;
             _possibilitySet = _possibilitySet & ~mask;
             if (--RemainingPossibilityCount == 1) {
                 _value = _possibilitySet.FirstHiBitPosition();
             }
             if (Changed != null) {
-                Changed(this, new CellChangedEventArgs(this, oldVal, _possibilitySet, null));
+                Changed(this, null);
             }
         }
 
         #endregion
 
-        public event EventHandler<CellChangedEventArgs> Changed;
-    }
-
-    public class CellChangedEventArgs : EventArgs {
-        public Cell Cell;
-        public int EliminatedSet;
-        public IRegion Foundin;
-        public int NewSet;
-        public int NumEliminated;
-        public int OldSet;
-
-        public CellChangedEventArgs(Cell cell, int oldSet, int newSet, IRegion foundin) {
-            Cell = cell;
-            OldSet = oldSet;
-            NewSet = newSet;
-            EliminatedSet = oldSet & ~newSet;
-            NumEliminated = EliminatedSet.HiBitCount();
-            Foundin = foundin;
-        }
+        public event Action<Cell, IRegion> Changed;
     }
 }
