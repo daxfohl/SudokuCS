@@ -23,7 +23,7 @@ namespace Sudoku.Solving {
             }
         }
 
-        protected override void OperateOn(SudokuModel model) {
+        void OperateOnParallel(SudokuModel model) {
             // we retain the index, as it's more efficient 
             // to keep operating in the same area than to start over at cell[0,0]
             // every time.
@@ -42,6 +42,23 @@ namespace Sudoku.Solving {
                 // go to the next cell
             });
             // if we've gone through the whole model
+            // without eliminating anything, then there's no use
+            // trying anymore.
+        }
+
+        protected override void OperateOn(SudokuModel model) {
+            var startIndex = _index; // = new Random().Next(model.SizeSquared); // we retain the index, as it's more efficient 
+            // to keep operating in the same area than to start over at cell[0,0]
+            // every time.
+            do {
+                var cell = model.Cells.Get(_indices[_index]);
+                if (OperateOn(cell, model)) {
+                    return;
+                }
+                // go to the next cell
+                _index++;
+                _index %= model.SizeSquared;
+            } while (_index != startIndex); // if we've gone through the whole model
             // without eliminating anything, then there's no use
             // trying anymore.
         }
