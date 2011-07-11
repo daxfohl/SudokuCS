@@ -31,7 +31,7 @@ namespace Sudoku.Model {
                 if (_cells == null) {
                     _cells = new Cell[Length];
                     for (var i = 0; i < Length; ++i) {
-                        _cells[i] = GetCell(Model, i);
+                        _cells[i] = GetCell(i);
                     }
                 }
                 return _cells;
@@ -52,7 +52,7 @@ namespace Sudoku.Model {
 
         #region Abstract methods
 
-        protected abstract Cell GetCell(SudokuModel model, int i);
+        protected abstract Cell GetCell(int row);
         protected abstract void LoadIntersectingSquares(Square[] squares);
 
         #endregion

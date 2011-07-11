@@ -1,6 +1,5 @@
 using System;
 using Sudoku.Model;
-using Sudoku.Types;
 
 namespace Sudoku.Solving {
     /// <summary>

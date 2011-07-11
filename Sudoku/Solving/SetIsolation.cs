@@ -17,21 +17,23 @@ namespace Sudoku.Solving {
             // We could look at all 2^N possible sets on all 3N of the model's regions, 
             // but it is more efficient to only use the
             // possiblity set of each cell, and isolate that set on each intersecting region.
-            foreach (var cell in model.Cells) {
-                if (!cell.IsSolved) {
-                    foreach (var region in cell.IntersectingRegions) {
-                        var checkedIter = GetCheckedIteration(region);
-                        if (checkedIter < region.LastChangedIteration) {
-                            _checkedIteration[region] = checkedIter;
-                            IsolateSet(cell.PossibilitySet, region);
+            for (var row = 0; row < model.Size; ++row) {
+                for (var col = 0; col < model.Size; ++col) {
+                    if (!model.IsSolved(col, row)) {
+                        foreach (var region in model.GetIntersectingRegions(col, row)) {
+                            var checkedIter = GetCheckedIteration(region);
+                            if (checkedIter < region.LastChangedIteration) {
+                                _checkedIteration[region] = checkedIter;
+                                IsolateSet(model.GetPossibilitySetCell(col, row), region, model);
+                            }
                         }
                     }
                 }
             }
         }
 
-        static void IsolateSet(int set, IRegion region) {
-            var cellsNotContainedBySet = region.Cells.Where(cell => (cell.PossibilitySet | set) != set).ToList();
+        static void IsolateSet(int set, IRegion region, SudokuModel model) {
+            var cellsNotContainedBySet = region.Cells.Where(cell => (model.GetPossibilitySetCell(cell.Column, cell.Row) | set) != set).ToList();
             var numCellsContainedBySet = region.Cells.Length - cellsNotContainedBySet.Count;
             if (numCellsContainedBySet != set.HiBitCount()) {
                 return;
@@ -41,7 +43,8 @@ namespace Sudoku.Solving {
             // possibility bits.
             var mask = ~set;
             foreach (var cell in cellsNotContainedBySet) {
-                cell.PossibilitySet &= mask;
+                model.SetPossibilitySetCell(cell.Column, cell.Row,
+                    model.GetPossibilitySetCell(cell.Column, cell.Row) & mask);
             }
         }
 

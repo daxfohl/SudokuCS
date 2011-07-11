@@ -10,7 +10,6 @@ namespace Sudoku.Solving {
     /// </summary>
     class TrialAndError : Strategy {
         readonly Strategy _elimStrategy;
-        readonly int[] _indices = new int[625];
         int _index;
         /// <summary>
         ///   The constructor
@@ -18,12 +17,9 @@ namespace Sudoku.Solving {
         /// <param name = "elimStrategies">The elimination strategies to run</param>
         public TrialAndError(params Strategy[] elimStrategies) {
             _elimStrategy = new MultiStrategy(elimStrategies);
-            for (var i = 0; i < 625; ++i) {
-                _indices[i] = (36 * i) % 625;
-            }
         }
 
-        void OperateOnParallel(SudokuModel model) {
+        protected override void OperateOn(SudokuModel model) {
             // we retain the index, as it's more efficient 
             // to keep operating in the same area than to start over at cell[0,0]
             // every time.
@@ -32,11 +28,12 @@ namespace Sudoku.Solving {
                 int index;
                 lock (this) {
                     index = _index;
-                    ++_index;
+                    _index +=36;
                     _index %= sz;
                 }
-                var cell = model.Cells.Get(_indices[index]);
-                if (OperateOn(cell, model)) {
+                var col = index % 25;
+                var row = index / 25;
+                if (OperateOn(col, row, model)) {
                     loopState.Stop();
                 }
                 // go to the next cell
@@ -46,37 +43,21 @@ namespace Sudoku.Solving {
             // trying anymore.
         }
 
-        protected override void OperateOn(SudokuModel model) {
-            var startIndex = _index; // = new Random().Next(model.SizeSquared); // we retain the index, as it's more efficient 
-            // to keep operating in the same area than to start over at cell[0,0]
-            // every time.
-            do {
-                var cell = model.Cells.Get(_indices[_index]);
-                if (OperateOn(cell, model)) {
-                    return;
-                }
-                // go to the next cell
-                _index++;
-                _index %= model.SizeSquared;
-            } while (_index != startIndex); // if we've gone through the whole model
-            // without eliminating anything, then there's no use
-            // trying anymore.
-        }
-
-        bool OperateOn(Cell cell, SudokuModel model) {
-            if (!cell.IsSolved) {
+        bool OperateOn(int col, int row, SudokuModel model) {
+            if (!model.IsSolved(col, row)) {
                 // obviously can't eliminate anything in a solved cell.
                 // try each int i that is a possibility for the cell, and see if an error results
-                foreach (var i in cell.PossibilitySet.HighBitPositions()) {
+                foreach (var i in model.GetPossibilitySetCell(col, row).HighBitPositions()) {
                     var clone = new SudokuModel(model);
-                    clone.Cells[cell.ColumnIndex, cell.RowIndex].Value = i;
+                    clone.SetValue(col, row, i);
                     _elimStrategy.Run(clone);
                     if (clone.IsConsistent) {
                         continue;
                     }
                     // If so, we can eliminate that from the original model.
-                    cell.Eliminate(i);
-                    return true; // return immediately after eliminating something, since
+                    model.Eliminate(col, row, i);
+                    return true; 
+                    // return immediately after eliminating something, since
                     // this is a slow algorithm, and we want our faster
                     // algorithms to see if they make some more eliminations first.
                 }

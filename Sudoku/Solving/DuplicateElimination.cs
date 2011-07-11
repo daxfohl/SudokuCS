@@ -8,32 +8,33 @@ namespace Sudoku.Solving {
     /// </summary>
     public class DuplicateElimination : Strategy {
         protected override void OperateOn(SudokuModel model) {
-            foreach (var cell in model.Cells) {
-                EliminateDuplicates(cell);
+            for (var row = 0; row < model.Size; ++row) {
+                for (var col = 0; col < model.Size; ++col) {
+                    EliminateDuplicates(model, col, row);
+                }
             }
         }
 
-        public static void EliminateDuplicates(Cell cell) {
-            if (cell.IsSolved) {
-                var value = cell.Value;
-                foreach (var region in cell.IntersectingRegions) {
+        public static void EliminateDuplicates(SudokuModel model, int col, int row) {
+            if (model.IsSolved(col, row)) {
+                var value = model.GetValue(col, row);
+                foreach (var region in model.GetIntersectingRegions(col, row)) {
                     foreach (var other in region.Cells) {
-                        if (other != cell) {
-                            other.Eliminate(value);
+                        if (other.Column != col || other.Row != row) {
+                            model.Eliminate(other.Column, other.Row, value);
                         }
                     }
                 }
             }
         }
-
-        public static void EliminateDuplicates(Cell cell, IRegion foundin) {
-            if (cell.IsSolved) {
-                var value = cell.Value;
-                foreach (var region in cell.IntersectingRegions) {
+        public static void EliminateDuplicates(SudokuModel model, int col, int row, IRegion foundin) {
+            if (model.IsSolved(col, row)) {
+                var value = model.GetValue(col, row);
+                foreach (var region in model.GetIntersectingRegions(col, row)) {
                     if (region != foundin) {
                         foreach (var other in region.Cells) {
-                            if (other != cell) {
-                                other.Eliminate(value);
+                            if (other.Column != col || other.Row != row) {
+                                model.Eliminate(other.Column, other.Row, value);
                             }
                         }
                     }

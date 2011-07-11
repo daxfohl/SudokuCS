@@ -62,7 +62,6 @@
     <Compile Include="Solving\MultiStrategy.cs" />
     <Compile Include="Types\BitArrayEx.cs" />
     <Compile Include="Model\Cell.cs" />
-    <Compile Include="Types\Grid.cs" />
     <Compile Include="Model\Line.cs" />
     <Compile Include="Model\Column.cs" />
     <Compile Include="Model\Region.cs" />

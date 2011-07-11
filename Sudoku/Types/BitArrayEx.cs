@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 
 namespace Sudoku.Types {
     /// <summary>
-    /// Works like System.Collections.BitArray, but is invariate (for safety) and a struct,
-    /// so should work more intuitively.  Also the .Equals() is overridden to be 
-    /// by-value instead of by-reference.
+    ///   Works like System.Collections.BitArray, but is invariate (for safety) and a struct,
+    ///   so should work more intuitively.  Also the .Equals() is overridden to be 
+    ///   by-value instead of by-reference.
     /// </summary>
     public static class BitArrayEx {
         public static int HiBitCount(this int ii) {
@@ -17,7 +16,7 @@ namespace Sudoku.Types {
         }
 
         public static int FirstHiBitPosition(this int ii) {
-            int i = (((ii & 0xaaaaaaaa) == 0) ? 0 : 1);
+            var i = (((ii & 0xaaaaaaaa) == 0) ? 0 : 1);
             i += (((ii & 0xcccccccc) == 0) ? 0 : 2);
             i += (((ii & 0xf0f0f0f0) == 0) ? 0 : 4);
             i += (((ii & 0xff00ff00) == 0) ? 0 : 8);
@@ -25,10 +24,10 @@ namespace Sudoku.Types {
         }
 
         /// <summary>
-        /// An iterator that gives you the positions of the high bits.
+        ///   An iterator that gives you the positions of the high bits.
         /// </summary>
         public static IEnumerable<int> HighBitPositions(this int ii) {
-            for (int curr = 0; curr < 32; ++curr) {
+            for (var curr = 0; curr < 32; ++curr) {
                 if (((1 << curr) & ii) != 0) {
                     yield return curr;
                 }

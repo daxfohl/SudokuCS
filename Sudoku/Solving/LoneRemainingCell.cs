@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Sudoku.Model;
-using Sudoku.Types;
 
 namespace Sudoku.Solving {
     /// <summary>
@@ -17,9 +16,9 @@ namespace Sudoku.Solving {
                     _checkedIteration[region] = model.ChangeCount;
                     foreach (var i in region.UnsolvedValues) {
                         var timesFound = 0;
-                        Cell foundAt = null;
+                        Cell? foundAt = null;
                         foreach (var cell in region.Cells) {
-                            if ((cell.PossibilitySet & (1 << i)) != 0) {
+                            if ((model.GetPossibilitySetCell(cell.Column, cell.Row) & (1 << i)) != 0) {
                                 ++timesFound;
                                 foundAt = cell;
                                 if (timesFound > 1) {
@@ -29,7 +28,7 @@ namespace Sudoku.Solving {
                         }
                         if (timesFound == 1) {
                             if (foundAt != null) {
-                                foundAt.SetValueOptimized(i, region);
+                                model.SetValueOptimized(foundAt.Value.Column, foundAt.Value.Row, i, region);
                             }
                         }
                     }

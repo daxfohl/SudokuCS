@@ -4,11 +4,14 @@ using Sudoku.Model;
 
 namespace Sudoku.View {
     class SudokuGridView : DataGridView {
+        SudokuModel _model;
+
         /// <summary>
         ///   Adds new columns and rows to correspond to the model
         /// </summary>
         public SudokuModel Model {
             set {
+                _model = value;
                 int len = value.Size;
                 Rows.Clear();
                 Columns.Clear();
@@ -20,7 +23,7 @@ namespace Sudoku.View {
                     Rows[i].HeaderCell.Value = i.ToString();
                     Columns[i].Width = Rows[0].Height;
                     for (int j = 0; j < len; ++j) {
-                        var square = value.Cells[i, j].Square;
+                        var square = value.GetSquare(i, j);
                         this[i, j].Style.BackColor =
                             ((square.SquareCol + square.SquareRow) % 2) == 0 ? Color.LightBlue : Color.LightYellow;
                     }
@@ -31,15 +34,12 @@ namespace Sudoku.View {
         /// <summary>
         ///   Updates the cell in the view to correspond to the model
         /// </summary>
-        /// <param name = "cell"></param>
-        public void UpdateCell(Cell cell) {
-            int col = cell.ColumnIndex;
-            int row = cell.RowIndex;
-            if (cell.IsSolved) {
+        public void UpdateCell(int col, int row) {
+            if (_model.IsSolved(col, row)) {
                 this[col, row].Style.ForeColor = Color.Black;
-                this[col, row].Value = (char)(cell.Value + 'A');
+                this[col, row].Value = (char)(_model.GetValue(col, row) + 'A');
             } else {
-                this[col, row].Value = cell.RemainingPossibilityCount;
+                this[col, row].Value = _model.GetRemainingPossibilityCount(col, row);
             }
         }
     }

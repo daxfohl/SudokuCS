@@ -76,7 +76,7 @@ namespace Sudoku.View {
             this.mnuOpen.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.mnuOpen.Size = new System.Drawing.Size(146, 22);
             this.mnuOpen.Text = "&Open";
-            this.mnuOpen.Click += new System.EventHandler(this.mnuOpen_Click);
+            this.mnuOpen.Click += new System.EventHandler(this.mnuOpen_OnClick);
             // 
             // actionToolStripMenuItem
             // 
@@ -92,7 +92,7 @@ namespace Sudoku.View {
             this.mnuSolve.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.mnuSolve.Size = new System.Drawing.Size(121, 22);
             this.mnuSolve.Text = "&Solve";
-            this.mnuSolve.Click += new System.EventHandler(this.mnuSolve_Click);
+            this.mnuSolve.Click += new System.EventHandler(this.mnuSolve_OnClick);
             // 
             // panel1
             // 
@@ -166,7 +166,7 @@ namespace Sudoku.View {
             this._btnSolve.TabIndex = 4;
             this._btnSolve.Text = "Solve";
             this._btnSolve.UseVisualStyleBackColor = true;
-            this._btnSolve.Click += new System.EventHandler(this._btnSolve_Click);
+            this._btnSolve.Click += new System.EventHandler(this._btnSolve_OnClick);
             // 
             // _btnReload
             // 
@@ -176,7 +176,7 @@ namespace Sudoku.View {
             this._btnReload.TabIndex = 3;
             this._btnReload.Text = "Reload";
             this._btnReload.UseVisualStyleBackColor = true;
-            this._btnReload.Click += new System.EventHandler(this._btnReload_Click);
+            this._btnReload.Click += new System.EventHandler(this._btnReload_OnClick);
             // 
             // _txtProgress
             // 
@@ -208,7 +208,7 @@ namespace Sudoku.View {
             // 
             // tmrScreenUpdate
             // 
-            this.tmrScreenUpdate.Tick += new System.EventHandler(this.tmrScreenUpdate_Tick);
+            this.tmrScreenUpdate.Tick += new System.EventHandler(this.tmrScreenUpdate_OnTick);
             // 
             // _chkUpdate
             // 
@@ -232,7 +232,7 @@ namespace Sudoku.View {
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Sudoku";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.Form1_OnLoad);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);

@@ -1,10 +1,9 @@
 using System;
 using Sudoku.Model;
-using Sudoku.Types;
 
 namespace Sudoku.Solving {
     /// <summary>
-    /// The primary sudoku solver class
+    ///   The primary sudoku solver class
     /// </summary>
     public class Solver {
         readonly Strategy _eliminationStrategy;
@@ -46,7 +45,7 @@ namespace Sudoku.Solving {
             }
         }
 
-        void HandleScanFinished( Strategy e) {
+        void HandleScanFinished(Strategy e) {
             // bubble up the event
             if (ScanFinished != null) {
                 ScanFinished(e);

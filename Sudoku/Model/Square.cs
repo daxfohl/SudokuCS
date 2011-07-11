@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using Sudoku.Types;
 
 namespace Sudoku.Model {
     /// <summary>
-    /// Represents a square within the model, with all the expected methods and properties.
+    ///   Represents a square within the model, with all the expected methods and properties.
     /// </summary>
     public class Square : Region {
         readonly int _sqrCol;
@@ -31,29 +30,21 @@ namespace Sudoku.Model {
 
         #region Properties
 
-        public int SquareCol {
-            get { return _sqrCol; }
-        }
+        public int SquareCol { get { return _sqrCol; } }
 
-        public int SquareRow {
-            get { return _sqrRow; }
-        }
+        public int SquareRow { get { return _sqrRow; } }
 
-        public int StartCol {
-            get { return _startCol; }
-        }
+        public int StartCol { get { return _startCol; } }
 
-        public int StartRow {
-            get { return _startRow; }
-        }
+        public int StartRow { get { return _startRow; } }
 
         public override Cell[] Cells {
             get {
                 if (_cells == null) {
                     _cells = new Cell[SideLength * SideLength];
-                    for (int c = 0; c < SideLength; ++c) {
-                        for (int r = 0; r < SideLength; ++r) {
-                            _cells[c * SideLength + r] = Model.Cells[c + _startCol, r + _startRow];
+                    for (var c = 0; c < SideLength; ++c) {
+                        for (var r = 0; r < SideLength; ++r) {
+                            _cells[c * SideLength + r] = new Cell(c + _startCol, r + _startRow);
                         }
                     }
                 }
@@ -61,15 +52,13 @@ namespace Sudoku.Model {
             }
         }
 
-        public int SideLength {
-            get { return Model.SizeSqrt; }
-        }
+        public int SideLength { get { return Model.SizeSqrt; } }
 
         public IEnumerable<Line> IntersectingLines {
             get {
                 if (_intersectingLines == null) {
                     _intersectingLines = new Line[SideLength * 2];
-                    for (int i = 0; i < SideLength; ++i) {
+                    for (var i = 0; i < SideLength; ++i) {
                         _intersectingLines[i] = Model.Columns[StartCol + i];
                         _intersectingLines[i + SideLength] = Model.Rows[StartRow + i];
                     }
@@ -79,10 +68,9 @@ namespace Sudoku.Model {
         }
 
         public override bool Contains(Cell cell) {
-            return cell.Square == this;
+            return Model.GetSquare(cell.Column, cell.Row) == this;
         }
 
         #endregion
-
     }
 }

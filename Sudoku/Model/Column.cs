@@ -6,19 +6,19 @@ namespace Sudoku.Model {
         public Column(SudokuModel model, int col) : base(model, col) {}
         public Column(SudokuModel model, Line col) : base(model, col) {}
 
-        protected override Cell GetCell(SudokuModel model, int i) {
-            return model.Cells[Index, i];
+        protected override Cell GetCell(int row) {
+            return new Cell(Index, row);
         }
 
         protected override void LoadIntersectingSquares(Square[] squares) {
-            int squareCol = Cells[0].Square.SquareCol;
+            int squareCol = Model.GetSquare(Index, 0).StartCol;
             for (int i = 0; i < squares.Length; ++i) {
                 squares[i] = Model.Squares[squareCol, i];
             }
         }
 
         public override bool Contains(Cell cell) {
-            return cell.Column == this;
+            return cell.Column == Index;
         }
     }
 }
