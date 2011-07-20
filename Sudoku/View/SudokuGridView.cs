@@ -3,8 +3,12 @@ using System.Windows.Forms;
 using Sudoku.Model;
 
 namespace Sudoku.View {
-    class SudokuGridView : DataGridView {
+    sealed class SudokuGridView : DataGridView {
         SudokuModel _model;
+
+        public SudokuGridView() {
+            DoubleBuffered = true;
+        }
 
         /// <summary>
         ///   Adds new columns and rows to correspond to the model

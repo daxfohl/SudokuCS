@@ -11,7 +11,7 @@ namespace Sudoku.Solving {
     ///   so we can eliminate possiblities 1, 2, and 3 from any other cell in the region.
     /// </summary>
     public class SetIsolation : Strategy {
-        readonly Dictionary<IRegion, int> _checkedIteration = new Dictionary<IRegion, int>();
+        readonly Dictionary<Region, int> _checkedIteration = new Dictionary<Region, int>();
 
         protected override void OperateOn(SudokuModel model) {
             // We could look at all 2^N possible sets on all 3N of the model's regions, 
@@ -32,7 +32,7 @@ namespace Sudoku.Solving {
             }
         }
 
-        static void IsolateSet(int set, IRegion region, SudokuModel model) {
+        static void IsolateSet(int set, Region region, SudokuModel model) {
             var cellsNotContainedBySet = region.Cells.Where(cell => (model.GetPossibilitySetCell(cell.Column, cell.Row) | set) != set).ToList();
             var numCellsContainedBySet = region.Cells.Length - cellsNotContainedBySet.Count;
             if (numCellsContainedBySet != set.HiBitCount()) {
@@ -43,12 +43,12 @@ namespace Sudoku.Solving {
             // possibility bits.
             var mask = ~set;
             foreach (var cell in cellsNotContainedBySet) {
-                model.SetPossibilitySetCell(cell.Column, cell.Row,
-                    model.GetPossibilitySetCell(cell.Column, cell.Row) & mask);
+                var poss = model.GetPossibilitySetCell(cell.Column, cell.Row);
+                model.SetPossibilitySetCell(cell.Column, cell.Row, poss & mask);
             }
         }
 
-        int GetCheckedIteration(IRegion region) {
+        int GetCheckedIteration(Region region) {
             if (!_checkedIteration.ContainsKey(region)) {
                 _checkedIteration[region] = -1;
             }

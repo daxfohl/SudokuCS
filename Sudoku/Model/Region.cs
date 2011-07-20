@@ -2,18 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Sudoku.Model {
-    /// <summary>
-    ///   The abstract interface for Row, Column, and Square
-    /// </summary>
-    public interface IRegion {
-        Cell[] Cells { get; }
-        int LastChangedIteration { get; set; }
-        IEnumerable<int> UnsolvedValues { get; }
-        bool Contains(Cell cell);
-        void SetValueSolved(int value);
-    }
-
-    public abstract class Region : IRegion {
+    public abstract class Region {
         readonly SudokuModel _model;
         readonly BitArray _solved;
 
@@ -25,7 +14,7 @@ namespace Sudoku.Model {
 
         protected SudokuModel Model { get { return _model; } }
 
-        #region IRegion Members
+        #region Region Members
 
         public abstract Cell[] Cells { get; }
         public int LastChangedIteration { get; set; }

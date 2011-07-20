@@ -20,7 +20,7 @@ namespace Sudoku.Solving {
             }
         }
 
-        static void AgreeRegions(SudokuModel model, IRegion r1, IRegion r2) {
+        static void AgreeRegions(SudokuModel model, Region r1, Region r2) {
             // For each number in the puzzle,
             for (var num = 0; num < model.Size; ++num) {
                 // determine if the number is in the set of cells {r1 minus r2}

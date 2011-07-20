@@ -27,7 +27,7 @@ namespace Sudoku.Solving {
                 }
             }
         }
-        public static void EliminateDuplicates(SudokuModel model, int col, int row, IRegion foundin) {
+        public static void EliminateDuplicates(SudokuModel model, int col, int row, Region foundin) {
             if (model.IsSolved(col, row)) {
                 var value = model.GetValue(col, row);
                 foreach (var region in model.GetIntersectingRegions(col, row)) {

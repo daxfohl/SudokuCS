@@ -8,7 +8,7 @@ namespace Sudoku.Solving {
     ///   can obviously set that cell to N.
     /// </summary>
     public class LoneRemainingCell : Strategy {
-        readonly Dictionary<IRegion, int> _checkedIteration = new Dictionary<IRegion, int>();
+        readonly Dictionary<Region, int> _checkedIteration = new Dictionary<Region, int>();
 
         protected override void OperateOn(SudokuModel model) {
             foreach (var region in model.AllRegions) {
@@ -36,7 +36,7 @@ namespace Sudoku.Solving {
             }
         }
 
-        int GetCheckedIteration(IRegion region) {
+        int GetCheckedIteration(Region region) {
             int value;
             _checkedIteration.TryGetValue(region, out value);
             return value;

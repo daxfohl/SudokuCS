@@ -9,12 +9,12 @@ namespace Sudoku.Model {
     ///   The main sudoku model.
     /// </summary>
     public class SudokuModel {
-        readonly List<IRegion> _allRegions;
+        readonly List<Region> _allRegions;
         readonly Column[] _cols;
         readonly int[,] _lastChangedIteration;
         readonly int[,] _possibilitySetCell;
         readonly int _possibilitySetModel;
-        readonly IRegion[,][] _regions;
+        readonly Region[,][] _regions;
         readonly int[,] _remainingPossibilityCount;
         readonly Row[] _rows;
         readonly int _size;
@@ -40,7 +40,7 @@ namespace Sudoku.Model {
             _remainingPossibilityCount = new int[Size,Size];
             _value = new int[Size,Size];
             _lastChangedIteration = new int[Size,Size];
-            _regions = new IRegion[Size,Size][];
+            _regions = new Region[Size,Size][];
 
             // Initialize the Cell objects, and the cache values
             for (var col = 0; col < size; ++col) {
@@ -67,7 +67,7 @@ namespace Sudoku.Model {
             }
 
             // Finally initialize the Regions object
-            _allRegions = new List<IRegion>(_cols);
+            _allRegions = new List<Region>(_cols);
             _allRegions.AddRange(_rows);
             _allRegions.AddRange(_squares.Cast<Square>());
         }
@@ -76,8 +76,7 @@ namespace Sudoku.Model {
         ///   Copy constructor
         /// </summary>
         /// <param name = "model"></param>
-        public SudokuModel(SudokuModel model)
-            : this(model.Size) {
+        public SudokuModel(SudokuModel model) {
             // Initialize our variables
             var size = model.Size;
             _size = size;
@@ -89,7 +88,7 @@ namespace Sudoku.Model {
             _remainingPossibilityCount = new int[Size,Size];
             _value = new int[Size,Size];
             _lastChangedIteration = new int[Size,Size];
-            _regions = new IRegion[Size,Size][];
+            _regions = new Region[Size,Size][];
 
             // Initialize the Cell objects, and the cache values
             for (var col = 0; col < size; ++col) {
@@ -116,7 +115,7 @@ namespace Sudoku.Model {
             }
 
             // Finally initialize the Regions object
-            _allRegions = new List<IRegion>(_cols);
+            _allRegions = new List<Region>(_cols);
             _allRegions.AddRange(_rows);
             _allRegions.AddRange(_squares.Cast<Square>());
 
@@ -150,7 +149,7 @@ namespace Sudoku.Model {
 
         public Square[,] Squares { get { return _squares; } }
 
-        public IEnumerable<IRegion> AllRegions { get { return _allRegions; } }
+        public IEnumerable<Region> AllRegions { get { return _allRegions; } }
 
         public int SolvedCount { get; private set; }
 
@@ -167,17 +166,21 @@ namespace Sudoku.Model {
         ///   cells that has a certain number.
         /// </summary>
         /// <returns>true if valid</returns>
-        public bool IsConsistent {
-            get {
-                for (var row = 0; row < Size; ++row) {
-                    for (var col = 0; col < Size; ++col) {
-                        if (_possibilitySetCell[col, row] == 0) {
-                            return false;
-                        }
+        public bool IsConsistent() {
+            for (var row = 0; row < Size; ++row) {
+                for (var col = 0; col < Size; ++col) {
+                    if (_possibilitySetCell[col, row] == 0) {
+                        return false;
                     }
                 }
-                return _allRegions.Select(region => region.Cells.Aggregate(0, (current, cell) => current | _possibilitySetCell[cell.Column, cell.Row])).All(totalSet => totalSet == _possibilitySetModel);
             }
+            foreach (var region in _allRegions) {
+                var totalSet = region.Cells.Aggregate(0, (current, cell) => current | _possibilitySetCell[cell.Column, cell.Row]);
+                if (totalSet != _possibilitySetModel) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public event Action<int, int> ModelChanged;
@@ -192,7 +195,7 @@ namespace Sudoku.Model {
         /// <summary>
         ///   We update our cache variables and bubble up the event.
         /// </summary>
-        void HandleCellChanged(int col, int row, IRegion foundIn) {
+        void HandleCellChanged(int col, int row, Region foundIn) {
             EliminatedCount += 1;
             LastChangedCell = new Cell(col, row);
             var value = _value[col, row];
@@ -213,7 +216,7 @@ namespace Sudoku.Model {
         }
 
 
-        public event Action<int, int, IRegion> CellChanged;
+        public event Action<int, int, Region> CellChanged;
 
         void Cell(int col, int row) {
             _possibilitySetCell[col, row] = PossibilitySetModel;
@@ -286,9 +289,9 @@ namespace Sudoku.Model {
         /// <summary>
         ///   Returns the Row, Column, and Square that contain that cell.
         /// </summary>
-        public IEnumerable<IRegion> GetIntersectingRegions(int col, int row) {
+        public IEnumerable<Region> GetIntersectingRegions(int col, int row) {
             if (_regions[col, row] == null) {
-                _regions[col, row] = new IRegion[3];
+                _regions[col, row] = new Region[3];
                 _regions[col, row][0] = _cols[col];
                 _regions[col, row][1] = _rows[row];
                 _regions[col, row][2] = GetSquare(col, row);
@@ -304,7 +307,7 @@ namespace Sudoku.Model {
             return _lastChangedIteration[col, row];
         }
 
-        public void SetValueOptimized(int col, int row, int val, IRegion foundin) {
+        public void SetValueOptimized(int col, int row, int val, Region foundin) {
             if (_value[col, row] == val) {
                 return;
             }

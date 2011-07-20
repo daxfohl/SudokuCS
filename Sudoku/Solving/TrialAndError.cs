@@ -24,11 +24,11 @@ namespace Sudoku.Solving {
             // to keep operating in the same area than to start over at cell[0,0]
             // every time.
             var sz = model.SizeSquared;
-            Parallel.For(0, 635, (i, loopState) => {
+            Parallel.For(0, 625, (i, loopState) => {
                 int index;
                 lock (this) {
                     index = _index;
-                    _index +=36;
+                    _index += 36;
                     _index %= sz;
                 }
                 var col = index % 25;
@@ -43,6 +43,30 @@ namespace Sudoku.Solving {
             // trying anymore.
         }
 
+         void tOperateOn(SudokuModel model) {
+            // we retain the index, as it's more efficient 
+            // to keep operating in the same area than to start over at cell[0,0]
+            // every time.
+            var sz = model.SizeSquared;
+            for (int i = 0; i < sz; ++i) {
+                int index;
+                lock (this) {
+                    index = _index;
+                    _index += 36;
+                    _index %= sz;
+                }
+                var col = index % 25;
+                var row = index / 25;
+                if (OperateOn(col, row, model)) {
+                    return;
+                }
+                // go to the next cell
+            }
+            // if we've gone through the whole model
+            // without eliminating anything, then there's no use
+            // trying anymore.
+        }
+
         bool OperateOn(int col, int row, SudokuModel model) {
             if (!model.IsSolved(col, row)) {
                 // obviously can't eliminate anything in a solved cell.
@@ -51,7 +75,7 @@ namespace Sudoku.Solving {
                     var clone = new SudokuModel(model);
                     clone.SetValue(col, row, i);
                     _elimStrategy.Run(clone);
-                    if (clone.IsConsistent) {
+                    if (clone.IsConsistent()) {
                         continue;
                     }
                     // If so, we can eliminate that from the original model.
