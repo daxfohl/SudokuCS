@@ -10,31 +10,31 @@ namespace Sudoku.Solving {
     ///   We only check on r1 is a square and r2 is an intersecting line, or vice versa, since
     ///   other cases (r1 a line and r2 a line, or any non-intersecting regions) are trivial.
     /// </summary>
-    class SquareLineAgreement : Strategy {
-        protected override void OperateOn(SudokuModel model) {
-            foreach (var square in model.Squares) {
-                foreach (var line in square.IntersectingLines) {
-                    AgreeRegions(model, square, line);
-                    AgreeRegions(model, line, square);
-                }
-            }
-        }
+    //class SquareLineAgreement : Strategy {
+    //    protected override void OperateOn(SudokuModel model) {
+    //        foreach (var square in model.Squares) {
+    //            foreach (var line in square.IntersectingLines) {
+    //                AgreeRegions(model, square, line);
+    //                AgreeRegions(model, line, square);
+    //            }
+    //        }
+    //    }
 
-        static void AgreeRegions(SudokuModel model, IRegion r1, IRegion r2) {
-            // For each number in the puzzle,
-            for (var num = 0; num < model.Size; ++num) {
-                // determine if the number is in the set of cells {r1 minus r2}
-                var num1 = num;
-                var found = r1.Cells.Any(cell => !r2.Contains(cell) && (model.GetPossibilitySetCell(cell.Column, cell.Row) & (1 << num1)) != 0);
-                // if not found, then we know it must be in {r1 intersection r2}, so we can
-                // eliminate it in {r2 minus r1}
-                if (found) {
-                    continue;
-                }
-                foreach (var cell in r2.Cells.Where(cell => !r1.Contains(cell))) {
-                    model.Eliminate(cell.Column, cell.Row, num);
-                }
-            }
-        }
-    }
+    //    static void AgreeRegions(SudokuModel model, Region r1, Region r2) {
+    //        // For each number in the puzzle,
+    //        for (var num = 0; num < model.Size; ++num) {
+    //            // determine if the number is in the set of cells {r1 minus r2}
+    //            var num1 = num;
+    //            var found = r1.Cells.Any(cell => !r2.Contains(cell) && (model.GetPossibilitySetCell(cell.Column, cell.Row) & (1 << num1)) != 0);
+    //            // if not found, then we know it must be in {r1 intersection r2}, so we can
+    //            // eliminate it in {r2 minus r1}
+    //            if (found) {
+    //                continue;
+    //            }
+    //            foreach (var cell in r2.Cells.Where(cell => !r1.Contains(cell))) {
+    //                model.Eliminate(cell.Column, cell.Row, num);
+    //            }
+    //        }
+    //    }
+    //}
 }

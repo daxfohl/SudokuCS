@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Sudoku.Model;
 
@@ -8,27 +9,32 @@ namespace Sudoku.Solving {
     ///   can obviously set that cell to N.
     /// </summary>
     public class LoneRemainingCell : Strategy {
-        readonly Dictionary<IRegion, int> _checkedIteration = new Dictionary<IRegion, int>();
+        readonly Dictionary<Tuple<SudokuModel, Region>, int> _checkedIteration = new Dictionary<Tuple<SudokuModel, Region>, int>();
 
         protected override void OperateOn(SudokuModel model) {
-            foreach (var region in model.AllRegions) {
-                if (GetCheckedIteration(region) < region.LastChangedIteration) {
-                    _checkedIteration[region] = model.ChangeCount;
-                    foreach (var i in region.UnsolvedValues) {
-                        var timesFound = 0;
-                        Cell? foundAt = null;
-                        foreach (var cell in region.Cells) {
-                            if ((model.GetPossibilitySetCell(cell.Column, cell.Row) & (1 << i)) != 0) {
-                                ++timesFound;
-                                foundAt = cell;
-                                if (timesFound > 1) {
-                                    break;
+            for (var iType = 0; iType < 3; ++iType) {
+                var type = (RegionType)iType;
+                for (var i = 0; i < model.Size; ++i) {
+                    var region = new Region(type, i);
+                    var tuple = new Tuple<SudokuModel, Region>(model, region);
+                    if (GetCheckedIteration(tuple) < model.GetLastChangedIterRegion(type, i)) {
+                        _checkedIteration[tuple] = model.ChangeCount;
+                        foreach (var unsolved in model.GetUnsolvedValues(type, i)) {
+                            var timesFound = 0;
+                            Cell? foundAt = null;
+                            foreach (var cell in model.GetCells(type, i)) {
+                                if ((model.GetPossibilitySetCell(cell.Column, cell.Row) & (1 << unsolved)) != 0) {
+                                    ++timesFound;
+                                    foundAt = cell;
+                                    if (timesFound > 1) {
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        if (timesFound == 1) {
-                            if (foundAt != null) {
-                                model.SetValueOptimized(foundAt.Value.Column, foundAt.Value.Row, i, region);
+                            if (timesFound == 1) {
+                                if (foundAt != null) {
+                                    model.SetValueOptimized(foundAt.Value.Column, foundAt.Value.Row, unsolved, type, i);
+                                }
                             }
                         }
                     }
@@ -36,9 +42,9 @@ namespace Sudoku.Solving {
             }
         }
 
-        int GetCheckedIteration(IRegion region) {
+        int GetCheckedIteration(Tuple<SudokuModel, Region> tuple) {
             int value;
-            _checkedIteration.TryGetValue(region, out value);
+            _checkedIteration.TryGetValue(tuple, out value);
             return value;
         }
     }

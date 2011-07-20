@@ -62,11 +62,7 @@
     <Compile Include="Solving\MultiStrategy.cs" />
     <Compile Include="Types\BitArrayEx.cs" />
     <Compile Include="Model\Cell.cs" />
-    <Compile Include="Model\Line.cs" />
-    <Compile Include="Model\Column.cs" />
     <Compile Include="Model\Region.cs" />
-    <Compile Include="Model\Row.cs" />
-    <Compile Include="Model\Square.cs" />
     <Compile Include="Solving\DuplicateElimination.cs" />
     <Compile Include="View\Form1.cs">
       <SubType>Form</SubType>

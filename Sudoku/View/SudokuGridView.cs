@@ -3,8 +3,11 @@ using System.Windows.Forms;
 using Sudoku.Model;
 
 namespace Sudoku.View {
-    class SudokuGridView : DataGridView {
+    sealed class SudokuGridView : DataGridView {
         SudokuModel _model;
+        public SudokuGridView() {
+            DoubleBuffered = true;
+        }
 
         /// <summary>
         ///   Adds new columns and rows to correspond to the model
@@ -19,13 +22,12 @@ namespace Sudoku.View {
                     Columns.Add(i.ToString(), i.ToString());
                 }
                 Rows.Add(len);
-                for (int i = 0; i < len; ++i) {
-                    Rows[i].HeaderCell.Value = i.ToString();
-                    Columns[i].Width = Rows[0].Height;
-                    for (int j = 0; j < len; ++j) {
-                        var square = value.GetSquare(i, j);
-                        this[i, j].Style.BackColor =
-                            ((square.SquareCol + square.SquareRow) % 2) == 0 ? Color.LightBlue : Color.LightYellow;
+                for (int row = 0; row < len; ++row) {
+                    Rows[row].HeaderCell.Value = row.ToString();
+                    Columns[row].Width = Rows[0].Height;
+                    for (int col = 0; col < len; ++col) {
+                        this[row, col].Style.BackColor =
+                            ((col / _model.SizeSqrt + row / _model.SizeSqrt) % 2) == 0 ? Color.LightBlue : Color.LightYellow;
                     }
                 }
             }
