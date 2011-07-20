@@ -8,7 +8,6 @@ namespace Sudoku.Model {
     public struct Region {
         public readonly int I;
         public readonly RegionType Type;
-
         public Region(RegionType type, int i) {
             Type = type;
             I = i;
